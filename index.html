@@ -56,7 +56,7 @@
         .tv-container { height: 50px; overflow: hidden; pointer-events: none; }
         .tv-clip { margin-top: -46px; }
 
-        /* Holiday Section Restored */
+        /* Holiday Section */
         .holiday-card { background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-top: 10px; }
         .holiday-title { font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
         .holiday-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
@@ -112,19 +112,12 @@
 
 <div id="scrap-tab" class="tab-content">
     <h2 style="color:var(--success); margin-bottom: 5px;">Scrap Buying Prices</h2>
-    <p style="font-size:12px; color:#94a3b8; margin-bottom: 20px;">Rates updated daily based on manual entry.</p>
-<div id="scrap-update-time" style="font-size: 10px; color: #94a3b8; margin-bottom: 15px; font-weight: bold;">
-    Last Office Update: --:--
-</div>
+    <p style="font-size:12px; color:#94a3b8; margin-bottom: 20px;">Rates updated daily from Provincial Office.</p>
+    <div id="scrap-update-time" style="font-size: 10px; color: #94a3b8; margin-bottom: 15px; font-weight: bold;">
+        Last Office Update: --:--
+    </div>
     <div id="scrap-items-container">
-        <div class="scrap-row">
-            <div class="scrap-info"><span class="scrap-name">ULAB (Battery)</span><span style="font-size:10px; color:#64748b;">Mixed Scrap</span></div>
-            <div class="scrap-price">$0.85/kg</div>
-        </div>
-        <div class="scrap-row">
-            <div class="scrap-info"><span class="scrap-name">Soft Lead</span><span style="font-size:10px; color:#64748b;">Pure Lead Scrap</span></div>
-            <div class="scrap-price">$1.15/kg</div>
-        </div>
+        <p style="text-align:center; color:#94a3b8; padding-top:20px;">Connecting to Sheet...</p>
     </div>
 </div>
 
@@ -144,8 +137,8 @@
 </div>
 
 <script>
-    
-    const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQt636l3wPeS_phF4WOyDK-T5TmQQqhJ2GkdDv0JOMGgzZM-R0SDMB0vEJwkVtFGSv6DvwfR7LToW_A/pub?output=csv";
+    // 1. Updated Web App URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz0qs7QDwbVZConK0gaGtudJg1jcODhyMR57qUZP0NNe_WwfnT9BHFWA6lJeLrZ_Yiv/exec";
 
     function switchTab(tabId, el) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -157,44 +150,46 @@
         if(tabId === 'scrap-tab') { fetchScrapPrices(); }
     }
 
-   // 1. Paste the "Web App URL" from Step 1 here
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpoPk9l44D_da_8RyTnxjIZOG3EiLPg6wFGQdW_Z-DTrwcyixN71T9RU-vv5j9DLvj/exec";
+    function fetchScrapPrices() {
+        const container = document.getElementById('scrap-items-container');
+        
+        // Remove old script if it exists
+        const oldScript = document.getElementById('jsonp-script');
+        if (oldScript) oldScript.remove();
 
-function fetchScrapPrices() {
-    const container = document.getElementById('scrap-items-container');
-    
-    // Remove old script if it exists
-    const oldScript = document.getElementById('jsonp-script');
-    if (oldScript) oldScript.remove();
+        // Create a new script element to pull data
+        const script = document.createElement('script');
+        script.id = 'jsonp-script';
+        script.src = GOOGLE_SCRIPT_URL + "?callback=callback&v=" + Date.now();
+        document.body.appendChild(script);
+    }
 
-    // Create a new script element to bypass CORS
-    const script = document.createElement('script');
-    script.id = 'jsonp-script';
-    script.src = GOOGLE_SCRIPT_URL + "?callback=callback";
-    document.body.appendChild(script);
-}
+    // This function triggers when Google sends the data
+    function callback(data) {
+        const container = document.getElementById('scrap-items-container');
+        const scrapUpdateTime = document.getElementById('scrap-update-time');
+        
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#ef4444;">No data found. Check Sheet permissions.</p>';
+            return;
+        }
 
-// This function runs automatically when the data arrives
-function callback(data) {
-    const container = document.getElementById('scrap-items-container');
-    const scrapUpdateTime = document.getElementById('scrap-update-time');
-    
-    let html = '';
-    data.forEach(item => {
-        html += `
-            <div class="scrap-row">
-                <div class="scrap-info">
-                    <span class="scrap-name">${item.name}</span>
-                    <span style="font-size:10px; color:#64748b;">Verified Rate</span>
-                </div>
-                <div class="scrap-price">${item.price} <small style="font-size:11px;">${item.unit || 'KHR'}</small></div>
-            </div>`;
-    });
-    
-    container.innerHTML = html;
-    const now = new Date();
-    scrapUpdateTime.innerText = "Live Sync: " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-}
+        let html = '';
+        data.forEach(item => {
+            html += `
+                <div class="scrap-row">
+                    <div class="scrap-info">
+                        <span class="scrap-name">${item.name}</span>
+                        <span style="font-size:10px; color:#64748b;">Official Verified Rate</span>
+                    </div>
+                    <div class="scrap-price">${item.price} <small style="font-size:11px; color:#94a3b8;">${item.unit || 'KHR'}</small></div>
+                </div>`;
+        });
+        
+        container.innerHTML = html;
+        const now = new Date();
+        scrapUpdateTime.innerText = "Live Sync: " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }
 
     function updateDashboard() {
         const clock = document.getElementById('cambodia-clock');
@@ -209,6 +204,7 @@ function callback(data) {
             if(el.innerText === "--:--") el.innerText = "Updated: " + timeStr;
         });
 
+        // London Market Logic
         const lonH = parseInt(new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', hour:'numeric', hour12:false}).format(now));
         const lonD = new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', weekday:'short'}).format(now);
         const open = !['Sat','Sun'].includes(lonD) && (lonH >= 1 && lonH < 19);
@@ -225,6 +221,7 @@ function callback(data) {
         }
     }
 
+    // Auto-init
     updateDashboard();
     fetchScrapPrices(); 
     setInterval(updateDashboard, 30000);
