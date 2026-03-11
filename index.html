@@ -9,22 +9,32 @@
         :root { --accent: #00d2ff; --bg: #020617; --card-bg: #1e293b; --success: #22c55e; --nav-bg: #0f172a; }
         body { background-color: var(--bg); margin: 0; padding: 0; color: white; font-family: 'Outfit', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Navigation */
+        /* Tab System */
         .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; padding-bottom: 90px; }
         .tab-content.active { display: block; }
+
+        /* Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; }
         .nav-item.active { color: var(--accent); }
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
-        /* Header & Status */
+        /* Header Elements */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         .clock { color: #94a3b8; font-size: 14px; font-weight: 500; }
-        .sync-btn { background: var(--accent); color: #020617; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; }
+        .sync-btn { background: var(--accent); color: #020617; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3); }
         .status-pill { font-size: 14px; font-weight: 800; padding: 6px 12px; border-radius: 8px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1); display: inline-block; margin-top: 8px; }
         .m-live { color: var(--success); border-color: rgba(34, 197, 94, 0.4); background: rgba(34, 197, 94, 0.1); }
 
-        /* Scrap Row Layout */
+        /* Market Cards & Clipping Fix */
+        .grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px;}
+        @media (min-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
+        .card { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; }
+        .card-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-bottom: 10px; display: block; }
+        .tv-container { height: 50px; overflow: hidden; pointer-events: none; }
+        .tv-clip { margin-top: -46px; }
+
+        /* Scrap Row Styling - Clean View */
         .scrap-row { 
             display: flex; 
             align-items: center; 
@@ -33,21 +43,20 @@
             border-radius: 12px; 
             margin-bottom: 10px; 
             border-left: 5px solid var(--success);
-            font-size: 15px;
         }
-        .scrap-number { color: #64748b; font-weight: 800; min-width: 25px; }
-        .scrap-name { flex: 1; font-weight: 700; text-transform: uppercase; padding: 0 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .scrap-divider { color: rgba(255,255,255,0.2); font-weight: 300; padding: 0 10px; }
-        .scrap-price-container { display: flex; align-items: center; gap: 5px; min-width: 100px; justify-content: flex-end; }
+        .scrap-number { color: #64748b; font-weight: 800; min-width: 30px; font-size: 14px; }
+        .scrap-name { flex: 1; font-weight: 700; text-transform: uppercase; font-size: 15px; padding: 0 5px; }
+        .scrap-divider { color: rgba(255,255,255,0.2); padding: 0 10px; font-weight: 300; }
+        .scrap-price-info { display: flex; align-items: baseline; gap: 6px; min-width: 110px; justify-content: flex-end; }
         .scrap-price { color: var(--success); font-weight: 800; font-size: 18px; }
         .scrap-unit { color: #94a3b8; font-size: 11px; font-weight: 400; text-transform: uppercase; }
 
-        /* Live Price Cards */
-        .grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px;}
-        @media (min-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-        .card { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .card-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-bottom: 8px; display: block; }
-        .tv-mini { height: 40px; overflow: hidden; pointer-events: none; }
+        /* Holiday Cards */
+        .holiday-card { background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-top: 10px; }
+        .holiday-title { font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        .holiday-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .h-item { font-size: 11px; color: #94a3b8; display: flex; flex-direction: column; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; }
+        .h-date { color: #facc15; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -55,47 +64,59 @@
 <div id="live-tab" class="tab-content active">
     <div class="header">
         <div>
-            <h2 style="margin: 0; color: var(--accent); font-size: 18px;">Metal Intelligence</h2>
+            <h2 style="margin: 0; color: var(--accent); font-size: 20px;">Metal Intelligence</h2>
             <div id="cambodia-clock" class="clock">Phnom Penh: --:--</div>
             <div class="status-pill" id="status-container"><span id="status-text">CONNECTING</span></div>
         </div>
-        <button class="sync-btn" onclick="location.reload()">SYNC</button>
+        <button class="sync-btn" onclick="location.reload()">SYNC NOW</button>
     </div>
 
     <div class="grid">
         <div class="card" style="border-top: 3px solid #facc15;">
-            <span class="card-label">USD / KHR</span>
-            <div class="tv-mini"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "FX_IDC:USDKHR", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div>
+            <span class="card-label">USD to KHR</span>
+            <div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "FX_IDC:USDKHR", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div>
         </div>
         <div class="card" style="border-top: 3px solid var(--success);">
-            <span class="card-label">LME LEAD (Pb)</span>
-            <div class="tv-mini"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "CAPITALCOM:LEAD", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div>
+            <span class="card-label">LME Lead (Pb)</span>
+            <div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "CAPITALCOM:LEAD", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div>
         </div>
-        <div class="card"><span class="card-label">LME COPPER (Cu)</span><div class="tv-mini"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:COPPER", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div>
-        <div class="card"><span class="card-label">LME ALUMINIUM (Al)</span><div class="tv-mini"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ALUMINIUM", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div>
+        <div class="card"><span class="card-label">LME Copper (Cu)</span><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:COPPER", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><span class="card-label">LME Aluminium (Al)</span><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ALUMINIUM", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><span class="card-label">LME Zinc (Zn)</span><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ZINC", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><span class="card-label">LME Nickel (Ni)</span><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:NICKEL", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+    </div>
+
+    <div class="holiday-card">
+        <div class="holiday-title">🇰🇭 2026 Key Holidays</div>
+        <div class="holiday-list">
+            <div class="h-item"><span class="h-date">Apr 14-16</span><span>Khmer New Year</span></div>
+            <div class="h-item"><span class="h-date">Oct 09-11</span><span>Pchum Ben</span></div>
+            <div class="h-item"><span class="h-date">Nov 23-25</span><span>Water Festival</span></div>
+        </div>
     </div>
 </div>
 
 <div id="scrap-tab" class="tab-content">
     <h2 style="color:var(--success); margin: 0 0 5px 0;">Scrap Buying Prices</h2>
-    <div id="scrap-update-time" style="font-size: 11px; color: #94a3b8; margin-bottom: 20px;">Live Sync Active</div>
+    <div id="scrap-update-time" style="font-size: 11px; color: #94a3b8; margin-bottom: 20px;">Fetching from Office...</div>
     
     <div id="scrap-items-container">
         </div>
 </div>
 
 <div id="contact-tab" class="tab-content">
-    <h2 style="color:var(--accent);">Contact Office</h2>
-    <div class="scrap-row" style="margin-top:20px; border-left-color: var(--accent); cursor: pointer;" onclick="window.location.href='https://wa.me/YOUR_NUMBER'">
-        <div class="scrap-name">WHATSAPP PROCUREMENT</div>
-        <div class="scrap-icon">💬</div>
+    <h2 style="color:var(--accent);">Contact Us</h2>
+    <div class="card" style="margin-top: 20px; border-top: 3px solid var(--accent);">
+        <p style="color:#94a3b8; font-size:14px;">Direct line to procurement for bulk deliveries.</p>
+        <button class="sync-btn" style="width:100%; margin-bottom:12px; padding:15px; font-size: 16px;" onclick="window.location.href='https://wa.me/YOUR_NUMBER'">WHATSAPP</button>
+        <button class="sync-btn" style="width:100%; background:#94a3b8; padding:15px; font-size: 16px;" onclick="window.location.href='tel:YOUR_NUMBER'">DIRECT CALL</button>
     </div>
 </div>
 
 <div class="bottom-nav">
     <div class="nav-item active" onclick="switchTab('live-tab', this)"><span class="nav-icon">📊</span><span>LIVE</span></div>
     <div class="nav-item" onclick="switchTab('scrap-tab', this)"><span class="nav-icon">🚜</span><span>SCRAP</span></div>
-    <div class="nav-item" onclick="switchTab('contact-tab', this)"><span class="nav-icon">💬</span><span>CHAT</span></div>
+    <div class="nav-item" onclick="switchTab('contact-tab', this)"><span class="nav-icon">💬</span><span>CONTACT</span></div>
 </div>
 
 <script>
@@ -110,7 +131,6 @@
     }
 
     function fetchScrapPrices() {
-        const container = document.getElementById('scrap-items-container');
         const oldScript = document.getElementById('jsonp-script');
         if (oldScript) oldScript.remove();
         const script = document.createElement('script');
@@ -128,17 +148,17 @@
                     <div class="scrap-number">${index + 1}.</div>
                     <div class="scrap-name">${item.name}</div>
                     <div class="scrap-divider">|</div>
-                    <div class="scrap-price-container">
+                    <div class="scrap-price-info">
                         <span class="scrap-price">${item.price}</span>
                         <span class="scrap-unit">${item.unit || 'KHR'}</span>
                     </div>
                 </div>`;
         });
         container.innerHTML = html;
-        document.getElementById('scrap-update-time').innerText = "Last Updated: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        document.getElementById('scrap-update-time').innerText = "Last Office Update: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     };
 
-    function updateClock() {
+    function updateDashboard() {
         const clock = document.getElementById('cambodia-clock');
         const now = new Date();
         clock.innerText = "Phnom Penh: " + now.toLocaleTimeString('en-US', {timeZone:'Asia/Phnom_Penh', hour:'numeric', minute:'2-digit', hour12:true});
@@ -158,8 +178,8 @@
         }
     }
 
-    setInterval(updateClock, 30000);
-    updateClock();
+    updateDashboard();
+    setInterval(updateDashboard, 30000);
     fetchScrapPrices();
 </script>
 </body>
