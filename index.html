@@ -7,34 +7,53 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #00d2ff; --bg: #020617; --card-bg: #1e293b; --success: #22c55e; --nav-bg: #0f172a; }
-        body { background-color: var(--bg); margin: 0; padding: 0; color: white; font-family: 'Outfit', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background-color: var(--bg); margin: 0; padding: 0; color: white; font-family: 'Outfit', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-y; }
         
-        /* Tab System */
-        .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; padding-bottom: 90px; }
+        /* Tab Navigation */
+        .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; padding-bottom: 90px; -webkit-overflow-scrolling: touch; }
         .tab-content.active { display: block; }
 
-        /* Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .bottom-nav { 
+            position: fixed; bottom: 0; width: 100%; background: var(--nav-bg); 
+            display: flex; justify-content: space-around; padding: 12px 0;
+            border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #94a3b8; font-size: 10px; font-weight: 700; cursor: pointer; }
         .nav-item.active { color: var(--accent); }
         .nav-icon { font-size: 22px; margin-bottom: 4px; }
 
-        /* Header Elements */
+        /* Master Styles */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
         .clock { color: #94a3b8; font-size: 14px; font-weight: 500; }
-        .sync-btn { background: var(--accent); color: #020617; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3); }
-        .status-pill { font-size: 14px; font-weight: 800; padding: 6px 12px; border-radius: 8px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1); display: inline-block; margin-top: 8px; }
-        .m-live { color: var(--success); border-color: rgba(34, 197, 94, 0.4); background: rgba(34, 197, 94, 0.1); }
+        
+        .sync-btn { 
+            background: var(--accent); color: #020617; border: none; padding: 8px 14px; 
+            border-radius: 10px; font-weight: 800; font-size: 11px; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 210, 255, 0.2); text-transform: uppercase;
+        }
 
-        /* Market Cards & Clipping Fix */
+        .status-pill { 
+            font-size: 15px; font-weight: 800; padding: 6px 12px; border-radius: 8px; 
+            background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1); 
+            display: inline-block; margin-top: 8px;
+        }
+
+        @keyframes pulse-live {
+            0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; }
+        }
+        .m-live { color: var(--success) !important; border-color: rgba(34, 197, 94, 0.4) !important; animation: pulse-live 2s infinite ease-in-out; }
+
         .grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px;}
         @media (min-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
-        .card { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; }
-        .card-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold; margin-bottom: 10px; display: block; }
+
+        .card { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .card-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold; }
         .tv-container { height: 50px; overflow: hidden; pointer-events: none; }
         .tv-clip { margin-top: -46px; }
 
-        /* Scrap Row Styling - Clean View */
+        /* Scrap Layout - Sequential View */
         .scrap-row { 
             display: flex; 
             align-items: center; 
@@ -44,22 +63,26 @@
             margin-bottom: 10px; 
             border-left: 5px solid var(--success);
         }
-        .scrap-number { color: #64748b; font-weight: 800; min-width: 30px; font-size: 14px; }
-        .scrap-name { flex: 1; font-weight: 700; text-transform: uppercase; font-size: 15px; padding: 0 5px; }
-        .scrap-divider { color: rgba(255,255,255,0.2); padding: 0 10px; font-weight: 300; }
-        .scrap-price-info { display: flex; align-items: baseline; gap: 6px; min-width: 110px; justify-content: flex-end; }
-        .scrap-price { color: var(--success); font-weight: 800; font-size: 18px; }
-        .scrap-unit { color: #94a3b8; font-size: 11px; font-weight: 400; text-transform: uppercase; }
+        .scrap-number { color: #64748b; font-weight: 800; min-width: 30px; }
+        .scrap-name { flex: 1; font-weight: 700; text-transform: uppercase; padding: 0 5px; font-size: 14px; }
+        .scrap-divider { color: rgba(255,255,255,0.1); padding: 0 10px; }
+        .scrap-price-box { text-align: right; min-width: 90px; }
+        .scrap-price { color: var(--success); font-weight: 800; font-size: 18px; display: block; }
+        .scrap-unit { color: #94a3b8; font-size: 10px; font-weight: 400; }
 
-        /* Holiday Cards */
+        /* Holiday Card */
         .holiday-card { background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-top: 10px; }
-        .holiday-title { font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
-        .holiday-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-        .h-item { font-size: 11px; color: #94a3b8; display: flex; flex-direction: column; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; }
-        .h-date { color: #facc15; font-weight: bold; }
+        .holiday-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+        .h-item { font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; }
+        .h-date { color: #facc15; font-weight: bold; display: block; margin-bottom: 2px; }
+
+        /* Refresh Indicator */
+        #refresh-indicator { position: fixed; top: -50px; left: 0; width: 100%; text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; transition: top 0.3s; z-index: 2000; }
     </style>
 </head>
-<body>
+<body ontouchstart="startTouch(event)" ontouchmove="moveTouch(event)">
+
+<div id="refresh-indicator">RELEASE TO SYNC SCRAP ↓</div>
 
 <div id="live-tab" class="tab-content active">
     <div class="header">
@@ -68,26 +91,19 @@
             <div id="cambodia-clock" class="clock">Phnom Penh: --:--</div>
             <div class="status-pill" id="status-container"><span id="status-text">CONNECTING</span></div>
         </div>
-        <button class="sync-btn" onclick="location.reload()">SYNC NOW</button>
+        <button class="sync-btn" onclick="location.reload()">REFRESH APP</button>
     </div>
 
     <div class="grid">
-        <div class="card" style="border-top: 3px solid #facc15;">
-            <span class="card-label">USD to KHR</span>
-            <div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "FX_IDC:USDKHR", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div>
-        </div>
-        <div class="card" style="border-top: 3px solid var(--success);">
-            <span class="card-label">LME Lead (Pb)</span>
-            <div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "CAPITALCOM:LEAD", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div>
-        </div>
-        <div class="card"><span class="card-label">LME Copper (Cu)</span><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:COPPER", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
-        <div class="card"><span class="card-label">LME Aluminium (Al)</span><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ALUMINIUM", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
-        <div class="card"><span class="card-label">LME Zinc (Zn)</span><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ZINC", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
-        <div class="card"><span class="card-label">LME Nickel (Ni)</span><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:NICKEL", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card" style="border-top: 3px solid #facc15;"><div class="card-label">USD to KHR</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "FX_IDC:USDKHR", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card" style="border-top: 3px solid var(--success);"><div class="card-label">Pb (Lead)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "CAPITALCOM:LEAD", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><div class="card-label">Cu (Copper)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:COPPER", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><div class="card-label">Al (Aluminium)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ALUMINIUM", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><div class="card-label">Zn (Zinc)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ZINC", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><div class="card-label">Ni (Nickel)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:NICKEL", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
     </div>
 
     <div class="holiday-card">
-        <div class="holiday-title">🇰🇭 2026 Key Holidays</div>
         <div class="holiday-list">
             <div class="h-item"><span class="h-date">Apr 14-16</span><span>Khmer New Year</span></div>
             <div class="h-item"><span class="h-date">Oct 09-11</span><span>Pchum Ben</span></div>
@@ -97,8 +113,13 @@
 </div>
 
 <div id="scrap-tab" class="tab-content">
-    <h2 style="color:var(--success); margin: 0 0 5px 0;">Scrap Buying Prices</h2>
-    <div id="scrap-update-time" style="font-size: 11px; color: #94a3b8; margin-bottom: 20px;">Fetching from Office...</div>
+    <div class="header" style="align-items: center;">
+        <div>
+            <h2 style="color:var(--success); margin: 0;">Scrap Buying</h2>
+            <div id="scrap-update-time" style="font-size: 11px; color: #94a3b8; font-weight: bold;">Syncing...</div>
+        </div>
+        <button id="scrap-sync-btn" class="sync-btn" onclick="fetchScrapPrices()">SYNC DATA</button>
+    </div>
     
     <div id="scrap-items-container">
         </div>
@@ -120,7 +141,9 @@
 </div>
 
 <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz0qs7QDwbVZConK0gaGtudJg1jcODhyMR57qUZP0NNe_WwfnT9BHFWA6lJeLrZ_Yiv/exec";
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpoPk9l44D_da_8RyTnxjIZOG3EiLPg6wFGQdW_Z-DTrwcyixN71T9RU-vv5j9DLvj/exec";
+    
+    let touchStartY = 0;
 
     function switchTab(tabId, el) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -130,17 +153,39 @@
         if(tabId === 'scrap-tab') fetchScrapPrices();
     }
 
+    // Pull-to-Refresh Logic
+    function startTouch(e) { touchStartY = e.touches[0].pageY; }
+    function moveTouch(e) {
+        const touchY = e.touches[0].pageY;
+        const diff = touchY - touchStartY;
+        const indicator = document.getElementById('refresh-indicator');
+        if (diff > 100 && document.getElementById('scrap-tab').classList.contains('active')) {
+            indicator.style.top = "20px";
+            if (diff > 200) { 
+                indicator.style.top = "-50px"; 
+                fetchScrapPrices(); 
+                touchStartY = touchY; 
+            }
+        }
+    }
+
     function fetchScrapPrices() {
+        const btn = document.getElementById('scrap-sync-btn');
+        btn.innerText = "SYNCING...";
+        btn.style.opacity = "0.5";
+
         const oldScript = document.getElementById('jsonp-script');
         if (oldScript) oldScript.remove();
+
         const script = document.createElement('script');
         script.id = 'jsonp-script';
-        script.src = GOOGLE_SCRIPT_URL + "?callback=window.callback&v=" + Date.now();
+        script.src = GOOGLE_SCRIPT_URL + "?callback=callback&v=" + Date.now();
         document.body.appendChild(script);
     }
 
     window.callback = function(data) {
         const container = document.getElementById('scrap-items-container');
+        const btn = document.getElementById('scrap-sync-btn');
         let html = '';
         data.forEach((item, index) => {
             html += `
@@ -148,14 +193,16 @@
                     <div class="scrap-number">${index + 1}.</div>
                     <div class="scrap-name">${item.name}</div>
                     <div class="scrap-divider">|</div>
-                    <div class="scrap-price-info">
+                    <div class="scrap-price-box">
                         <span class="scrap-price">${item.price}</span>
                         <span class="scrap-unit">${item.unit || 'KHR'}</span>
                     </div>
                 </div>`;
         });
         container.innerHTML = html;
-        document.getElementById('scrap-update-time').innerText = "Last Office Update: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        btn.innerText = "SYNC DATA";
+        btn.style.opacity = "1";
+        document.getElementById('scrap-update-time').innerText = "Last Update: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     };
 
     function updateDashboard() {
