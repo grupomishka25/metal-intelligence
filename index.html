@@ -7,10 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --accent: #00d2ff; --bg: #020617; --card-bg: #1e293b; --success: #22c55e; --nav-bg: #0f172a; }
-        body { background-color: var(--bg); margin: 0; padding: 0; color: white; font-family: 'Outfit', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-y; }
+        body { background-color: var(--bg); margin: 0; padding: 0; color: white; font-family: 'Outfit', sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* Tab Navigation */
-        .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; padding-bottom: 90px; -webkit-overflow-scrolling: touch; }
+        /* Tab Navigation System */
+        .tab-content { display: none; padding: 15px; overflow-y: auto; flex: 1; padding-bottom: 90px; }
         .tab-content.active { display: block; }
 
         .bottom-nav { 
@@ -28,84 +28,82 @@
         .clock { color: #94a3b8; font-size: 14px; font-weight: 500; }
         
         .sync-btn { 
-            background: var(--accent); color: #020617; border: none; padding: 8px 14px; 
-            border-radius: 10px; font-weight: 800; font-size: 11px; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 210, 255, 0.2); text-transform: uppercase;
+            background: var(--accent); color: #020617; border: none; padding: 10px 18px; 
+            border-radius: 12px; font-weight: 800; font-size: 13px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
         }
 
         .status-pill { 
-            font-size: 15px; font-weight: 800; padding: 6px 12px; border-radius: 8px; 
+            font-size: 16px; font-weight: 800; padding: 8px 14px; border-radius: 10px; 
             background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255,255,255,0.1); 
-            display: inline-block; margin-top: 8px;
+            display: inline-block; margin-top: 8px; letter-spacing: 0.5px;
         }
 
         @keyframes pulse-live {
-            0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; }
+            0% { text-shadow: 0 0 5px rgba(34, 197, 94, 0.2); transform: scale(1); }
+            50% { text-shadow: 0 0 15px rgba(34, 197, 94, 0.6); transform: scale(1.02); }
+            100% { text-shadow: 0 0 5px rgba(34, 197, 94, 0.2); transform: scale(1); }
         }
-        .m-live { color: var(--success) !important; border-color: rgba(34, 197, 94, 0.4) !important; animation: pulse-live 2s infinite ease-in-out; }
+        .m-live { color: var(--success) !important; border-color: rgba(34, 197, 94, 0.4) !important; background: rgba(34, 197, 94, 0.1) !important; animation: pulse-live 2s infinite ease-in-out; }
 
         .grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px;}
         @media (min-width: 600px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 18px; } }
 
-        .card { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .card { background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; position: relative; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .card-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; font-weight: bold; }
+        .update-ts { font-size: 9px; color: #64748b; }
         .tv-container { height: 50px; overflow: hidden; pointer-events: none; }
         .tv-clip { margin-top: -46px; }
 
-        /* Scrap Layout - Sequential View */
-        .scrap-row { 
-            display: flex; 
-            align-items: center; 
-            background: var(--card-bg); 
-            padding: 18px 15px; 
-            border-radius: 12px; 
-            margin-bottom: 10px; 
-            border-left: 5px solid var(--success);
-        }
-        .scrap-number { color: #64748b; font-weight: 800; min-width: 30px; }
-        .scrap-name { flex: 1; font-weight: 700; text-transform: uppercase; padding: 0 5px; font-size: 14px; }
-        .scrap-divider { color: rgba(255,255,255,0.1); padding: 0 10px; }
-        .scrap-price-box { text-align: right; min-width: 90px; }
-        .scrap-price { color: var(--success); font-weight: 800; font-size: 18px; display: block; }
-        .scrap-unit { color: #94a3b8; font-size: 10px; font-weight: 400; }
-
-        /* Holiday Card */
+        /* Holiday Section Restored */
         .holiday-card { background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; margin-top: 10px; }
-        .holiday-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
-        .h-item { font-size: 11px; color: #94a3b8; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; }
-        .h-date { color: #facc15; font-weight: bold; display: block; margin-bottom: 2px; }
+        .holiday-title { font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        .holiday-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .h-item { font-size: 11px; color: #94a3b8; display: flex; flex-direction: column; background: rgba(255,255,255,0.03); padding: 8px; border-radius: 8px; }
+        .h-date { color: #facc15; font-weight: bold; margin-bottom: 2px; }
 
-        /* Refresh Indicator */
-        #refresh-indicator { position: fixed; top: -50px; left: 0; width: 100%; text-align: center; color: var(--accent); font-weight: 800; font-size: 12px; transition: top 0.3s; z-index: 2000; }
+        /* Scrap Page Specifics */
+        .scrap-row { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 20px; border-radius: 15px; margin-bottom: 12px; border-left: 5px solid var(--success); }
+        .scrap-info { display: flex; flex-direction: column; }
+        .scrap-name { font-weight: 800; font-size: 18px; }
+        .scrap-price { color: var(--success); font-weight: 800; font-size: 20px; }
     </style>
 </head>
-<body ontouchstart="startTouch(event)" ontouchmove="moveTouch(event)">
-
-<div id="refresh-indicator">RELEASE TO SYNC SCRAP ↓</div>
+<body>
 
 <div id="live-tab" class="tab-content active">
     <div class="header">
-        <div>
+        <div class="brand-section">
             <h2 style="margin: 0; color: var(--accent); font-size: 20px;">Metal Intelligence</h2>
-            <div id="cambodia-clock" class="clock">Phnom Penh: --:--</div>
+            <div id="cambodia-clock" class="clock">Phnom Penh: --:-- --</div>
             <div class="status-pill" id="status-container"><span id="status-text">CONNECTING</span></div>
         </div>
-        <button class="sync-btn" onclick="location.reload()">REFRESH APP</button>
+        <button class="sync-btn" onclick="location.reload()">SYNC NOW</button>
     </div>
 
     <div class="grid">
-        <div class="card" style="border-top: 3px solid #facc15;"><div class="card-label">USD to KHR</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "FX_IDC:USDKHR", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
-        <div class="card" style="border-top: 3px solid var(--success);"><div class="card-label">Pb (Lead)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "CAPITALCOM:LEAD", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
-        <div class="card"><div class="card-label">Cu (Copper)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:COPPER", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
-        <div class="card"><div class="card-label">Al (Aluminium)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ALUMINIUM", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
-        <div class="card"><div class="card-label">Zn (Zinc)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ZINC", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
-        <div class="card"><div class="card-label">Ni (Nickel)</div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:NICKEL", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card" style="border-top: 3px solid #facc15;">
+            <div class="card-header"><div class="card-label">USD to KHR</div><div class="update-ts last-sync">--:--</div></div>
+            <div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "FX_IDC:USDKHR", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div>
+        </div>
+        <div class="card" style="border-top: 3px solid var(--success);">
+            <div class="card-header"><div class="card-label">Pb (Lead)</div><div class="update-ts last-sync">--:--</div></div>
+            <div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "CAPITALCOM:LEAD", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div>
+        </div>
+        <div class="card"><div class="card-header"><div class="card-label">Cu (Copper)</div><div class="update-ts last-sync">--:--</div></div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:COPPER", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-label">Al (Aluminium)</div><div class="update-ts last-sync">--:--</div></div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ALUMINIUM", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-label">Zn (Zinc)</div><div class="update-ts last-sync">--:--</div></div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:ZINC", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
+        <div class="card"><div class="card-header"><div class="card-label">Ni (Nickel)</div><div class="update-ts last-sync">--:--</div></div><div class="tv-container"><div class="tv-clip"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js" async>{"symbol": "IG:NICKEL", "width": "100%", "colorTheme": "dark", "isTransparent": true}</script></div></div></div>
     </div>
 
     <div class="holiday-card">
+        <div class="holiday-title">🇰🇭 2026 Key Holidays</div>
         <div class="holiday-list">
             <div class="h-item"><span class="h-date">Apr 14-16</span><span>Khmer New Year</span></div>
+            <div class="h-item"><span class="h-date">May 01</span><span>Labor Day</span></div>
+            <div class="h-item"><span class="h-date">May 14</span><span>King's Birthday</span></div>
+            <div class="h-item"><span class="h-date">Sep 24</span><span>Constitution Day</span></div>
             <div class="h-item"><span class="h-date">Oct 09-11</span><span>Pchum Ben</span></div>
             <div class="h-item"><span class="h-date">Nov 23-25</span><span>Water Festival</span></div>
         </div>
@@ -113,121 +111,123 @@
 </div>
 
 <div id="scrap-tab" class="tab-content">
-    <div class="header" style="align-items: center;">
-        <div>
-            <h2 style="color:var(--success); margin: 0;">Scrap Buying</h2>
-            <div id="scrap-update-time" style="font-size: 11px; color: #94a3b8; font-weight: bold;">Syncing...</div>
-        </div>
-        <button id="scrap-sync-btn" class="sync-btn" onclick="fetchScrapPrices()">SYNC DATA</button>
-    </div>
-    
+    <h2 style="color:var(--success); margin-bottom: 5px;">Scrap Buying Prices</h2>
+    <p style="font-size:12px; color:#94a3b8; margin-bottom: 20px;">Rates updated daily based on manual entry.</p>
+<div id="scrap-update-time" style="font-size: 10px; color: #94a3b8; margin-bottom: 15px; font-weight: bold;">
+    Last Office Update: --:--
+</div>
     <div id="scrap-items-container">
+        <div class="scrap-row">
+            <div class="scrap-info"><span class="scrap-name">ULAB (Battery)</span><span style="font-size:10px; color:#64748b;">Mixed Scrap</span></div>
+            <div class="scrap-price">$0.85/kg</div>
         </div>
+        <div class="scrap-row">
+            <div class="scrap-info"><span class="scrap-name">Soft Lead</span><span style="font-size:10px; color:#64748b;">Pure Lead Scrap</span></div>
+            <div class="scrap-price">$1.15/kg</div>
+        </div>
+    </div>
 </div>
 
 <div id="contact-tab" class="tab-content">
     <h2 style="color:var(--accent);">Contact Us</h2>
     <div class="card" style="margin-top: 20px; border-top: 3px solid var(--accent);">
-        <p style="color:#94a3b8; font-size:14px;">Direct line to procurement for bulk deliveries.</p>
+        <p style="color:#94a3b8; font-size:14px;">Reach our procurement team directly for bulk quotes or warehouse delivery.</p>
         <button class="sync-btn" style="width:100%; margin-bottom:12px; padding:15px; font-size: 16px;" onclick="window.location.href='https://wa.me/YOUR_NUMBER'">WHATSAPP</button>
         <button class="sync-btn" style="width:100%; background:#94a3b8; padding:15px; font-size: 16px;" onclick="window.location.href='tel:YOUR_NUMBER'">DIRECT CALL</button>
     </div>
 </div>
 
 <div class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('live-tab', this)"><span class="nav-icon">📊</span><span>LIVE</span></div>
-    <div class="nav-item" onclick="switchTab('scrap-tab', this)"><span class="nav-icon">🚜</span><span>SCRAP</span></div>
+    <div class="nav-item active" onclick="switchTab('live-tab', this)"><span class="nav-icon">📊</span><span>LIVE PRICES</span></div>
+    <div class="nav-item" onclick="switchTab('scrap-tab', this)"><span class="nav-icon">🚜</span><span>SCRAP RATES</span></div>
     <div class="nav-item" onclick="switchTab('contact-tab', this)"><span class="nav-icon">💬</span><span>CONTACT</span></div>
 </div>
 
 <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzpoPk9l44D_da_8RyTnxjIZOG3EiLPg6wFGQdW_Z-DTrwcyixN71T9RU-vv5j9DLvj/exec";
     
-    let touchStartY = 0;
+    const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQt636l3wPeS_phF4WOyDK-T5TmQQqhJ2GkdDv0JOMGgzZM-R0SDMB0vEJwkVtFGSv6DvwfR7LToW_A/pub?output=csv";
 
     function switchTab(tabId, el) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
-        if(tabId === 'scrap-tab') fetchScrapPrices();
+        window.scrollTo(0,0);
+        
+        if(tabId === 'scrap-tab') { fetchScrapPrices(); }
     }
 
-    // Pull-to-Refresh Logic
-    function startTouch(e) { touchStartY = e.touches[0].pageY; }
-    function moveTouch(e) {
-        const touchY = e.touches[0].pageY;
-        const diff = touchY - touchStartY;
-        const indicator = document.getElementById('refresh-indicator');
-        if (diff > 100 && document.getElementById('scrap-tab').classList.contains('active')) {
-            indicator.style.top = "20px";
-            if (diff > 200) { 
-                indicator.style.top = "-50px"; 
-                fetchScrapPrices(); 
-                touchStartY = touchY; 
+   // 1. Paste the "Web App URL" from Step 1 here
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpoPk9l44D_da_8RyTnxjIZOG3EiLPg6wFGQdW_Z-DTrwcyixN71T9RU-vv5j9DLvj/exec";
+
+function fetchScrapPrices() {
+    const container = document.getElementById('scrap-items-container');
+    
+    // Remove old script if it exists
+    const oldScript = document.getElementById('jsonp-script');
+    if (oldScript) oldScript.remove();
+
+    // Create a new script element to bypass CORS
+    const script = document.createElement('script');
+    script.id = 'jsonp-script';
+    script.src = GOOGLE_SCRIPT_URL + "?callback=callback";
+    document.body.appendChild(script);
+}
+
+// This function runs automatically when the data arrives
+function callback(data) {
+    const container = document.getElementById('scrap-items-container');
+    const scrapUpdateTime = document.getElementById('scrap-update-time');
+    
+    let html = '';
+    data.forEach(item => {
+        html += `
+            <div class="scrap-row">
+                <div class="scrap-info">
+                    <span class="scrap-name">${item.name}</span>
+                    <span style="font-size:10px; color:#64748b;">Verified Rate</span>
+                </div>
+                <div class="scrap-price">${item.price} <small style="font-size:11px;">${item.unit || 'KHR'}</small></div>
+            </div>`;
+    });
+    
+    container.innerHTML = html;
+    const now = new Date();
+    scrapUpdateTime.innerText = "Live Sync: " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}
+
+    function updateDashboard() {
+        const clock = document.getElementById('cambodia-clock');
+        const statusText = document.getElementById('status-text');
+        const statusContainer = document.getElementById('status-container');
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', {timeZone:'Asia/Phnom_Penh', hour:'numeric', minute:'2-digit', hour12:true});
+        
+        if(clock) clock.innerText = "Phnom Penh: " + timeStr;
+        
+        document.querySelectorAll('.last-sync').forEach(el => {
+            if(el.innerText === "--:--") el.innerText = "Updated: " + timeStr;
+        });
+
+        const lonH = parseInt(new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', hour:'numeric', hour12:false}).format(now));
+        const lonD = new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', weekday:'short'}).format(now);
+        const open = !['Sat','Sun'].includes(lonD) && (lonH >= 1 && lonH < 19);
+        
+        if (statusText) {
+            if (open) {
+                statusText.innerText = "● MARKET LIVE";
+                statusContainer.className = "status-pill m-live";
+            } else {
+                statusText.innerText = "○ MARKET CLOSED";
+                statusContainer.className = "status-pill";
+                statusText.style.color = "#ef4444";
             }
         }
     }
 
-    function fetchScrapPrices() {
-        const btn = document.getElementById('scrap-sync-btn');
-        btn.innerText = "SYNCING...";
-        btn.style.opacity = "0.5";
-
-        const oldScript = document.getElementById('jsonp-script');
-        if (oldScript) oldScript.remove();
-
-        const script = document.createElement('script');
-        script.id = 'jsonp-script';
-        script.src = GOOGLE_SCRIPT_URL + "?callback=callback&v=" + Date.now();
-        document.body.appendChild(script);
-    }
-
-    window.callback = function(data) {
-        const container = document.getElementById('scrap-items-container');
-        const btn = document.getElementById('scrap-sync-btn');
-        let html = '';
-        data.forEach((item, index) => {
-            html += `
-                <div class="scrap-row">
-                    <div class="scrap-number">${index + 1}.</div>
-                    <div class="scrap-name">${item.name}</div>
-                    <div class="scrap-divider">|</div>
-                    <div class="scrap-price-box">
-                        <span class="scrap-price">${item.price}</span>
-                        <span class="scrap-unit">${item.unit || 'KHR'}</span>
-                    </div>
-                </div>`;
-        });
-        container.innerHTML = html;
-        btn.innerText = "SYNC DATA";
-        btn.style.opacity = "1";
-        document.getElementById('scrap-update-time').innerText = "Last Update: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    };
-
-    function updateDashboard() {
-        const clock = document.getElementById('cambodia-clock');
-        const now = new Date();
-        clock.innerText = "Phnom Penh: " + now.toLocaleTimeString('en-US', {timeZone:'Asia/Phnom_Penh', hour:'numeric', minute:'2-digit', hour12:true});
-        
-        const lonH = parseInt(new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', hour:'numeric', hour12:false}).format(now));
-        const lonD = new Intl.DateTimeFormat('en-GB', {timeZone:'Europe/London', weekday:'short'}).format(now);
-        const open = !['Sat','Sun'].includes(lonD) && (lonH >= 1 && lonH < 19);
-        const statusText = document.getElementById('status-text');
-        const statusContainer = document.getElementById('status-container');
-        
-        if (open) {
-            statusText.innerText = "● MARKET LIVE";
-            statusContainer.className = "status-pill m-live";
-        } else {
-            statusText.innerText = "○ MARKET CLOSED";
-            statusContainer.className = "status-pill";
-        }
-    }
-
     updateDashboard();
+    fetchScrapPrices(); 
     setInterval(updateDashboard, 30000);
-    fetchScrapPrices();
 </script>
 </body>
 </html>
